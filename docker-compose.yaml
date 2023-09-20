@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  ms-auth:
+    build:
+      context: ./ms-auth/
+      dockerfile: Dockerfile
+    container_name: ms-auth
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db3
+
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db3:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+
+
+  ms-message:
+    build:
+      context: ./ms-message/
+      dockerfile: Dockerfile
+    container_name: ms-message
+    ports:
+      - '8081:8081'
+    depends_on:
+      - db3
+
+
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db3:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+
+  db3:
+    image: 'testlagoon/postgres-15'
+    container_name: db3
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
